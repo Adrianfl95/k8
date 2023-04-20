@@ -17,9 +17,10 @@ spec:
       - name: mysql
         image: adrianfl95/mysql:latest
         volumeMounts:
+          - name: pvc-mysql-data
+            mountPath: /var/lib/mysql
           - name: pvc-mysql-config
-            mountPath: /data
-
+            mountPath: /etc/mysql/conf.d
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
@@ -30,6 +31,9 @@ spec:
         - containerPort: 3306
           name: mysqldb
       volumes: 
+        - name: pvc-mysql-data
+          persistentVolumeClaim:
+            claimName: pvc-mysql-data
         - name: pvc-mysql-config
           persistentVolumeClaim:
             claimName: pvc-mysql-config
