@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-php
+spec:
+  selector:
+    matchLabels:
+      app: apache-php
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: apache-php
+    spec:
+      containers:
+      - name: apache-php
+        image: adrianfl95/proyecto-iaw:latest
+        ports:
+        - containerPort: 80
+          name: web
+        env:
+        - name: PMA_HOST
+          value: mysql
+        - name: PMA_PORT
+          value: "3306"
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+           secretKeyRef:
+             name: key-list
+             key: password-mysql
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache-php
+spec:
+  selector:
+    app: apache-php
+  ports:
+    - port: 80
+      targetPort: 80
+  type: LoadBalancer
